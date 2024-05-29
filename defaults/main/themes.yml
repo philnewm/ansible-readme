@@ -1,0 +1,92 @@
+---
+# variables for gnome themes config
+
+gnome_themes:
+  shell_theme:
+    name: "Lavanda-Dark"
+    link: "https://github.com/vinceliuice/Lavanda-gtk-theme"
+    dconf:
+      "/org/gnome/desktop/interface/gtk-theme": "'Lavanda-Dark'"
+      "/org/gnome/shell/extensions/user-theme/name": "'Lavanda-Dark'"
+  icon_theme:
+    name: "Tela-circle-purple-dark"
+    link: "https://github.com/vinceliuice/Tela-circle-icon-theme"
+    dconf: 
+      "/org/gnome/desktop/interface/icon-theme": "'Tela-circle-purple-dark'"
+  cursor_theme:
+    name: "Qogir-cursors"
+    link: "https://github.com/vinceliuice/Qogir-icon-theme"
+    dconf: 
+      "/org/gnome/desktop/interface/cursor-theme": "'Qogir-ubuntu-cursors'"
+  wallpaper:
+    name: "Dynamic_Wallpapers"
+    link: "https://github.com/saint-13/Linux_Dynamic_Wallpapers"
+    dconf: 
+      "/org/gnome/desktop/background/picture-options": "'zoom'"
+      "/org/gnome/desktop/background/picture-uri": "'file:///usr/share/backgrounds/Dynamic_Wallpapers/BigSur.xml'"
+      "/org/gnome/desktop/background/picture-uri-dark": "'file:///usr/share/backgrounds/Dynamic_Wallpapers/BigSur.xml'"
+
+theme_repo:
+  "Lavanda-Dark":
+    dependencies:
+      "RedHat":
+        - gtk-murrine-engine
+        - sassc
+      "Debian":
+        - gtk2-engines-murrine
+        - sassc
+    repo_url: "https://github.com/vinceliuice/Lavanda-gtk-theme.git"
+    branch:
+      "40": "main"
+      "42": "main"
+      "43": "main"
+    installer: "install.sh"
+    install_cmd: "./install.sh --icon {{ ansible_distribution | lower }}"
+    download_dir: "Lavanda-gtk-theme/"
+    install_dir: "Lavanda-gtk-theme/"
+  "Tela-circle-purple-dark":
+    repo_url: "https://github.com/vinceliuice/Tela-circle-icon-theme.git"
+    branch:
+      "40": "master"
+      "42": "master"
+      "43": "master"
+    installer: "install.sh"
+    install_cmd: "./install.sh -c purple"
+    download_dir: "Tela-circle-icon-theme/"
+    install_dir: "Tela-circle-icon-theme/"
+  "Qogir-cursors":
+    repo_url: "https://github.com/vinceliuice/Qogir-icon-theme.git"
+    branch:
+      "40": "master"
+      "42": "master"
+      "43": "master"
+    installer: "install.sh"
+    install_cmd: "./install.sh"
+    download_dir: "Qogir-icon-theme/"
+    install_dir: "Qogir-icon-theme/src/cursors/"
+  "Dynamic_Wallpapers":
+    repo_url: "https://github.com/saint-13/Linux_Dynamic_Wallpapers.git"
+    branch:
+      "40": "main"
+      "42": "main"
+      "43": "main"
+    installer: "install.sh"
+    install_cmd: "./install.sh"
+    download_dir: "Linux_dynamic_Wallpapers/"
+    install_dir: "Linux_dynamic_Wallpapers/"
+
+theme_paths:
+  - "{{ ansible_env.HOME }}/.themes/"
+  - ".local/share/icons/"
+  - "/usr/share/backgrounds/"
+
+picture_src_path: ~/Documents/
+picture_dest_path: /var/lib/AccountsService/icons
+profile_config_path: /var/lib/AccountsService/users
+profile_pictures:
+  "vagrant": "vagrant"
+
+valid_shells:
+  - "/bin/bash"
+  - "/bin/sh"
+  - "/bin/zsh"

@@ -1,0 +1,8 @@
+{
+  "ansible.python.interpreterPath": "~/.venv/ansible_env/bin/python",
+  "python.defaultInterpreterPath": "~/.venv/ansible_env/bin/python",
+  "ansible.validation.lint.path": "~/.venv/ansible_env/bin/ansible-lint",
+  "ansible.ansible.path": "~/.venv/ansible_env/bin/ansible-config",
+  "ansible.lightspeed.suggestions.enabled": true,
+  "ansible.lightspeed.enabled": true
+}

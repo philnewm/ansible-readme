@@ -1,61 +1,24 @@
 Gnome Setup
 =========
 
-# TODO add links to tools
 This Roles builds a customized gnome desktop environment.
-It includes a bunch of [dconf](https://wiki.gnome.org/Projects/dconf) settings as well as extensions and themes beeing installed all in one go.
+It includes a bunch of {{ dconf }} settings as well as extensions and themes beeing installed all in one go.
 
 Extensions (not available on every distro):
-- [drive-menu](https://extensions.gnome.org/extension/7/removable-drive-menu/)
-- [user-theme](https://extensions.gnome.org/extension/19/user-themes/)
-- [appindicator](https://extensions.gnome.org/extension/615/appindicator-support/)
-- [sound-output-device-chooser](https://extensions.gnome.org/extension/906/sound-output-device-chooser/)
-- no-overview
-- tiling-assistant
-- dash-to-panel
-- system-monitor
-- clipboard-indicator
-
+{% for extension in extension_list -%}
+- [{{ extension.name }}]({{ extension.link }})
+{% endfor %}
 Themes:
-- Shell Theme: Lavanda-Dark
-- Icon Theme: Tela-circle-purple-dark
-- Cursor Theme: Qogir-cursors
-- Wallpaper: Dynamic_Wallpapers
+{% for theme_type, value in theme_list.items() -%}
+- {{ theme_type }}: [{{ value.name }}]({{ value.link }})
+{% endfor %}
 
-The rolse is 
-
-Additionally this role includes a full vagrant based molecule testing setup for CentOSStream9, Almalinux9, Rocky9, Debian12 and Ubuntu22.10 VMs at `extensions/molecule/gnome_setup_test`
+Additionally this role includes a full vagrant based molecule testing setup for {{ vm_list | join(", ") }} VMs at {{ test_env_path }}
 
 Structure
 ---------
 ```
-📦gnome_setup
- ┣ 📂defaults
- ┃ ┗ 📂main
- ┃ ┃ ┣ 📜common.yml
- ┃ ┃ ┣ 📜extensions.yml
- ┃ ┃ ┗ 📜themes.yml
- ┣ 📂handlers
- ┃ ┗ 📜main.yml
- ┣ 📂meta
- ┃ ┗ 📜main.yml
- ┣ 📂tasks
- ┃ ┣ 📜absent.yml
- ┃ ┣ 📜main.yml
- ┃ ┣ 📜present.yml
- ┃ ┣ 📜present_base_config.yml
- ┃ ┣ 📜present_base_setup.yml
- ┃ ┣ 📜present_extension_handling.yml
- ┃ ┣ 📜present_extensions.yml
- ┃ ┣ 📜present_profile_picture.yml
- ┃ ┣ 📜present_requirements.yml
- ┃ ┣ 📜present_theme_handling.yml
- ┃ ┗ 📜present_themes.yml
- ┣ 📂templates
- ┃ ┗ 📜gnome_profile.j2
- ┣ 📂vars
- ┃ ┗ 📜main.yml
- ┗ 📜README.md
+{{ dir_structure }}
 ```
 
 The variables are split up into three files according to their content (`common.yml`, `extensions.yml`, `themes.yml`).
@@ -68,21 +31,20 @@ In case not they loop over the tasks to setup and run their install routine impl
 Requirements
 ------------
 
-Currently the role expects vagrant users profile pictures to be located at `~/Documents/vagrant` by default, but this will change in future development.
+Currently the role expects vagrant users profile pictures to be located at {{ profile_picture_path }} by default, but this will change in future development.
 The following packages are required but will also be installed by the role automatically.
 
-**RedHat based systems**
-- python3-psutil
-- git
-- glibc-langpack-en
-
-**Debian based systems**
-- python3-psutil
-- git
+{% for os_family, dependencies in global_dependencies.items() -%}
+**{{ os_family }} based systems**
+{% for dependency in dependencies -%}
+- {{ dependency }}
+{% endfor %}
+{% endfor -%}
 
 Role Variables
 --------------
 
+# TODO grab from files and include description in structure too
 - defaults/main/common.yml
   - user_install_dir: Custom install directory inside users home directory
   - additional_rhel_repos: Extra repositories for RedHat based distros like CentOSStream9, AlmaLinux, Rocky, ...
@@ -115,18 +77,7 @@ Example Playbook
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 ```yaml
----
-
-- name: Create and configure gnome desktop
-  hosts: client
-  tasks:
-    - name: Include gnome role present
-      ansible.builtin.include_role:
-        name: gnome_setup
-      vars:
-        gnome_setup_state: present
-
-...
+{{ role_present }}
 ```
 License
 -------

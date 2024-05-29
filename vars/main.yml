@@ -1,0 +1,13 @@
+---
+# vars file for gnome_config
+
+dependencies:
+  "RedHat":
+    - python3-psutil
+    - git
+    - glibc-langpack-en
+  "Debian":
+    - python3-psutil
+    - git
+
+...

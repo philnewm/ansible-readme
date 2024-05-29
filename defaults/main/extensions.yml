@@ -1,0 +1,226 @@
+---
+
+# variables for gnome extension config
+
+gnome_extensions:
+  - name: "drive-menu"
+    link: "https://extensions.gnome.org/extension/7/removable-drive-menu/"
+    "RedHat":
+      address: "drive-menu@gnome-shell-extensions.gcampax.github.com"
+      package: "gnome-shell-extension-drive-menu"
+  - name: "user-theme"
+    link: "https://extensions.gnome.org/extension/19/user-themes/"
+    "RedHat":
+      address: "user-theme@gnome-shell-extensions.gcampax.github.com"
+      package: "gnome-shell-extension-user-theme"
+    "Debian":
+      address: "user-theme@gnome-shell-extensions.gcampax.github.com"
+      package: "gnome-shell-extensions"
+  - name: "appindicator"
+    link: "https://extensions.gnome.org/extension/615/appindicator-support/"
+    "RedHat":
+      address: "appindicatorsupport@rgcjonas.gmail.com"
+      package: "gnome-shell-extension-appindicator"
+    "Debian":
+      address: "ubuntu-appindicators@ubuntu.com"
+      package: "gnome-shell-extension-appindicator"
+  - name: "sound-output-device-chooser"
+    link: "https://extensions.gnome.org/extension/906/sound-output-device-chooser/"
+    "RedHat":
+      address: "sound-output-device-chooser@kgshank.net"
+      package: "gnome-shell-extension-sound-output-device-chooser"
+  - name: "no-overview"
+    link: "https://extensions.gnome.org/extension/4099/no-overview/"
+    "RedHat":
+      address: "no-overview@fthx"
+      package: "gnome-shell-extension-no-overview"
+  - name: "tiling-assistant"
+    link: "https://extensions.gnome.org/extension/3733/tiling-assistant/"
+    "RedHat":
+      address: "tiling-assistant@leleat-on-github"
+      package: "git"
+    "Debian":
+      address: "tiling-assistant@leleat-on-github"
+      package: "git"
+    dconf_path: "/org/gnome/shell/extensions/tiling-assistant/"
+    # INFO integrating path requires custom filter to grab dconf_path in internal loop
+    # TODO use anchors to utilize path
+    # defined like: &plank
+    # use like: *plank
+    dconf_settings:
+      "/org/gnome/shell/extensions/tiling-assistant/enable-tiling-popup": "false"
+      "/org/gnome/shell/extensions/tiling-assistant/active-window-hint-color": "'rgb(123,136,255)'"
+      "/org/gnome/shell/extensions/tiling-assistant/restore-window": "['<Super>Down']"
+      "/org/gnome/shell/extensions/tiling-assistant/tile-bottom-half": "['<Super>KP_2']"
+      "/org/gnome/shell/extensions/tiling-assistant/tile-top-half": "['<Super>KP_8']"
+      "/org/gnome/shell/extensions/tiling-assistant/tile-left-half": "['<Super>Left', '<Super>KP_4']"
+      "/org/gnome/shell/extensions/tiling-assistant/tile-right-half": "['<Super>Right', '<Super>KP_6']"
+      "/org/gnome/shell/extensions/tiling-assistant/tile-topleft-quarter": "['<Super>KP_7']"
+      "/org/gnome/shell/extensions/tiling-assistant/tile-topright-quarter": "['<Super>KP_9']"
+      "/org/gnome/shell/extensions/tiling-assistant/tile-bottomleft-quarter": "['<Super>KP_1']"
+      "/org/gnome/shell/extensions/tiling-assistant/tile-bottomright-quarter": "['<Super>KP_3']"
+  - name: "dash-to-panel"
+    link: "https://extensions.gnome.org/extension/1160/dash-to-panel/"  
+    # INFO [CentOSStream9] dash-to-panel from git instead of repo package for consistency
+    "RedHat":
+      address: "dash-to-panel@jderose9.github.com"
+      package: "git"
+    "Debian":
+      address: "dash-to-panel@jderose9.github.com"
+      package: "git"
+    # INFO integrating path requires custom filter to grab dconf_path in internal loop
+    dconf_path: "/org/gnome/shell/extensions/dash-to-panel/"
+    dconf_settings:
+      "/org/gnome/shell/extensions/dash-to-panel/animate-appicon-hover": "false"
+      "/org/gnome/shell/extensions/dash-to-panel/animate-appicon-hover-animation-convexity": "{'RIPPLE': 2.0, 'PLANK': 1.0, 'SIMPLE': 0.0}"
+      "/org/gnome/shell/extensions/dash-to-panel/animate-appicon-hover-animation-extent": "{'RIPPLE': 4, 'PLANK': 4, 'SIMPLE': 1}"
+      "/org/gnome/shell/extensions/dash-to-panel/animate-appicon-hover-animation-type": "'SIMPLE'"
+      "/org/gnome/shell/extensions/dash-to-panel/appicon-margin": "0"
+      "/org/gnome/shell/extensions/dash-to-panel/appicon-padding": "6"
+      "/org/gnome/shell/extensions/dash-to-panel/dot-position": "'BOTTOM'"
+      "/org/gnome/shell/extensions/dash-to-panel/dot-style-focused": "'DOTS'"
+      "/org/gnome/shell/extensions/dash-to-panel/dot-style-unfocused": "'DASHES'"
+      "/org/gnome/shell/extensions/dash-to-panel/group-apps": "true"
+      "/org/gnome/shell/extensions/dash-to-panel/hotkeys-overlay-combo": "'TEMPORARILY'"
+      "/org/gnome/shell/extensions/dash-to-panel/intellihide": "true"
+      "/org/gnome/shell/extensions/dash-to-panel/intellihide-hide-from-windows": "true"
+      "/org/gnome/shell/extensions/dash-to-panel/leftbox-padding": "-1"
+      "/org/gnome/shell/extensions/dash-to-panel/leftbox-size": "14"
+      "/org/gnome/shell/extensions/dash-to-panel/panel-anchors": "{'0':'MIDDLE'}"
+      "/org/gnome/shell/extensions/dash-to-panel/panel-lengths": "{'0':100}"
+      "/org/gnome/shell/extensions/dash-to-panel/panel-positions": "{'0':'BOTTOM'}"
+      "/org/gnome/shell/extensions/dash-to-panel/panel-sizes": "{'0':48}"
+      "/org/gnome/shell/extensions/dash-to-panel/primary-monitor": "0"
+      "/org/gnome/shell/extensions/dash-to-panel/show-apps-icon-file": "''"
+      "/org/gnome/shell/extensions/dash-to-panel/status-icon-padding": "4"
+      "/org/gnome/shell/extensions/dash-to-panel/trans-bg-color": "'#613583'"
+      "/org/gnome/shell/extensions/dash-to-panel/trans-gradient-bottom-color": "'#613583'"
+      "/org/gnome/shell/extensions/dash-to-panel/trans-gradient-top-color": "'#dc8add'"
+      "/org/gnome/shell/extensions/dash-to-panel/trans-panel-opacity": "0.2"
+      "/org/gnome/shell/extensions/dash-to-panel/trans-use-custom-bg": "true"
+      "/org/gnome/shell/extensions/dash-to-panel/trans-use-custom-gradient": "true"
+      "/org/gnome/shell/extensions/dash-to-panel/trans-use-custom-opacity": "true"
+      "/org/gnome/shell/extensions/dash-to-panel/trans-use-dynamic-opacity": "true"
+      "/org/gnome/shell/extensions/dash-to-panel/tray-padding": "6"
+      "/org/gnome/shell/extensions/dash-to-panel/tray-size": "16"
+      "/org/gnome/shell/extensions/dash-to-panel/window-preview-title-position": "'TOP'"
+  - name: "system-monitor"
+    link: "https://extensions.gnome.org/extension/120/system-monitor/"
+    "RedHat":
+      address: "system-monitor@paradoxxx.zero.gmail.com"
+      package: "gnome-shell-extension-system-monitor-applet"
+    "Debian":
+      address: "system-monitor@paradoxxx.zero.gmail.com"
+      package: "git"
+    # INFO integrating path requires custom filter to grab dconf_path in internal loop
+    dconf_path: "/org/gnome/shell/extensions/system-monitor/"
+    dconf_settings:
+      "/org/gnome/shell/extensions/system-monitor/compact-display": "true"
+      "/org/gnome/shell/extensions/system-monitor/cpu-graph-width": "50"
+      "/org/gnome/shell/extensions/system-monitor/cpu-individual-cores": "false"
+      "/org/gnome/shell/extensions/system-monitor/cpu-style": "'graph'"
+      "/org/gnome/shell/extensions/system-monitor/disk-display": "false"
+      "/org/gnome/shell/extensions/system-monitor/freq-display": "false"
+      "/org/gnome/shell/extensions/system-monitor/gpu-display": "false"
+      "/org/gnome/shell/extensions/system-monitor/memory-graph-width": "50"
+      "/org/gnome/shell/extensions/system-monitor/memory-style": "'graph'"
+      "/org/gnome/shell/extensions/system-monitor/move-clock": "true"
+      "/org/gnome/shell/extensions/system-monitor/net-graph-width": "50"
+      "/org/gnome/shell/extensions/system-monitor/thermal-display": "false"
+      "/org/gnome/shell/extensions/system-monitor/thermal-style": "'graph'"
+  - name: "clipboard-indicator"
+    link: "https://extensions.gnome.org/extension/779/clipboard-indicator/"
+    "RedHat":
+      address: "clipboard-indicator@tudmotu.com"
+      package: "git"
+    "Debian":
+      address: "clipboard-indicator@tudmotu.com"
+      package: "git"
+    # INFO integrating path requires custom filter to grab dconf_path in internal loop
+    dconf_path: "/org/gnome/shell/extensions/clipboard-indicator/"
+    dconf_settings:
+      "/org/gnome/shell/extensions/clipboard-indicator/move-item-first": "true"
+      "/org/gnome/shell/extensions/clipboard-indicator/notify-on-copy": "true"
+      "/org/gnome/shell/extensions/clipboard-indicator/toggle-menu": "['<Super>v']"
+      "/org/gnome/shell/keybindings/toggle-message-tray": "@as []"
+
+git_ext:
+  "tiling-assistant":
+    dependencies:
+      "RedHat":
+        - zip
+        - gettext
+      "Debian":
+        - zip
+        - gettext
+    repo_url: "https://github.com/Leleat/Tiling-Assistant.git"
+    branch:
+      "40": "v32"
+      "42": "v36"
+      "43": "v44" # INFO requires update after login since Tag "45" is missing in source repo
+    installer: "build.sh"
+    install_cmd: "./build.sh -i"
+    download_dir: "Tiling-Assistant/"
+    install_dir: "Tiling-Assistant/scripts/"
+  "dash-to-panel":
+    dependencies:
+      "RedHat":
+        - make
+        - gettext
+      "Debian":
+        - make
+        - gettext
+    repo_url: "https://github.com/home-sweet-gnome/dash-to-panel"
+    branch:
+      "40": "gnome-40"
+      "42": "v56"
+      "43": "v56"
+    installer: ""
+    install_cmd: "make install"
+    download_dir: "dash-to-panel/"
+    install_dir: "dash-to-panel/"
+  "system-monitor":
+    dependencies:
+      "RedHat":
+        - make
+        - gnome-system-monitor
+      "Debian":
+        - make
+        - gir1.2-gtop-2.0
+        - gir1.2-nm-1.0
+        - gir1.2-clutter-1.0
+        - gnome-system-monitor
+    repo_url: "https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet"
+    branch:
+      "40": "master"
+      "42": "master"
+      "43": "master"
+    installer: ""
+    install_cmd: "make install"
+    download_dir: "gnome-shell-system-monitor-applet/"
+    install_dir: "gnome-shell-system-monitor-applet/"
+  "clipboard-indicator":
+    repo_url: "https://github.com/Tudmotu/gnome-shell-extension-clipboard-indicator.git"
+    branch:
+      "40": "v39"
+      "42": "v47"
+      "43": "v47"
+    installer: "Makefile"
+    install_cmd: "make install"
+    download_dir: "gnome-shell-extension-clipboard-indicator/"
+    install_dir: "gnome-shell-extension-clipboard-indicator/"
+
+extension_paths:
+  - "{{ ansible_env.HOME }}/.local/share/gnome-shell/extensions/"
+  - "/usr/share/gnome-shell/extensions/"
+
+obsolete_gnome_extensions:
+  - apps-menu@gnome-shell-extensions.gcampax.github.com
+  - places-menu@gnome-shell-extensions.gcampax.github.com
+  - screenshot-window-sizer@gnome-shell-extensions.gcampax.github.com
+  - window-list@gnome-shell-extensions.gcampax.github.com
+  - windowsNavigator@gnome-shell-extensions.gcampax.github.com
+  - native-window-placement@gnome-shell-extensions.gcampax.github.com
+  - auto-move-windows@gnome-shell-extensions.gcampax.github.com
+
+...

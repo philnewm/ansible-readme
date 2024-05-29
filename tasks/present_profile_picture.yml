@@ -1,0 +1,45 @@
+---
+
+# Assign profile picture
+
+- name: Get users list
+  ansible.builtin.getent:
+    database: passwd
+
+# INFO get user names enabled for login
+- name: Extract usernames with valid shell
+  loop: "{{ getent_passwd | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  when: item.value[5] in valid_shells
+  ansible.builtin.set_fact:
+    shell_users: "{{ shell_users | default([]) + [item.key] }}"
+
+- name: Configure profile pictures
+  when: profile_pictures[shell_user] is defined
+  block:
+    - name: Copy profile pictures
+      become: true
+      loop: "{{ shell_users }}"
+      loop_control:
+        loop_var: shell_user
+      ansible.builtin.copy:
+        src: "{{ (picture_src_path, shell_user) | ansible.builtin.path_join }}"
+        dest: "{{ (picture_dest_path, shell_user) | ansible.builtin.path_join }}"
+        owner: root
+        group: root
+        mode: '0344'
+
+    - name: Create the shell_user configuration file
+      become: true
+      loop: "{{ shell_users }}"
+      loop_control:
+        loop_var: shell_user
+      ansible.builtin.template:
+        src: gnome_profile.j2
+        dest: "{{ profile_config_path }}/{{ shell_user }}"
+        owner: root
+        group: root
+        mode: 0600  # 0600 by default and changes to 0644 after first login
+
+...

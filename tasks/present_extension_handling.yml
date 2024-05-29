@@ -1,0 +1,43 @@
+---
+# handle gnome extension tasks
+
+- name: Get installed GNOME extensions
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      ls -1d {{ extension_paths | join('* ') }}* | xargs -n1 basename | cat
+    executable: /bin/bash
+  register: ext_names_list
+  changed_when: false
+  failed_when: ext_names_list.rc != 0 and 'No such file or directory' not in ext_names_list.stderr
+
+- name: Install extensions
+  loop: "{{ gnome_extensions }}"
+  when: extension[ansible_os_family] is defined and extension[ansible_os_family].address not in ext_names_list.stdout_lines
+  ansible.builtin.include_tasks:
+    file: present_extensions.yml
+  loop_control:
+    label: "{{ extension.name }}"
+    loop_var: extension
+
+- name: Remove unwanted gnome extensions
+  become: true
+  loop: "{{ obsolete_gnome_extensions }}"
+  ansible.builtin.file:
+    path: "/usr/share/gnome-shell/extensions/{{ item }}"
+    state: absent
+
+- name: Get installed GNOME extensions
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      ls -1d {{ extension_paths | join('* ') }}* | xargs -n1 basename | cat
+    executable: /bin/bash
+  register: ext_names_list
+  changed_when: false
+  failed_when: ext_names_list.rc != 0 and 'No such file or directory' not in ext_names_list.stderr
+
+- name: Enable installed extensions
+  ansible.builtin.dconf:
+    key: "/org/gnome/shell/enabled-extensions"
+    value: "{{ ext_names_list.stdout_lines | to_json }}"

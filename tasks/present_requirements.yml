@@ -1,0 +1,114 @@
+---
+# requirements file
+
+- name: Upgrade packages
+  become: true
+  when: ansible_os_family == debian
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+    # upgrade: yes
+    autoclean: yes
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Redhat based systems requirements
+  become: true
+  when: ansible_os_family == redhat
+  block:
+    - name: Enable CRB (CentOS Extras) repository
+      community.general.dnf_config_manager:
+        name: crb
+        state: enabled
+
+    - name: Import epel GPG key
+      ansible.builtin.rpm_key:
+        key: "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}"
+        state: present
+      register: result
+      until: result is succeeded
+      retries: 5
+      delay: 10
+
+    - name: Install epel repo
+      ansible.builtin.dnf:
+        name: epel-release
+        state: present
+
+    - name: Install distribution-gpg-keys package
+      ansible.builtin.dnf:
+        name: distribution-gpg-keys
+        state: present
+
+    - name: Import GPG keys
+      loop: "{{ additional_rhel_repos }}"
+      loop_control:
+        loop_var: key
+        label: "{{ key.name }}"
+      when: key.name not in ansible_facts.packages
+      ansible.builtin.rpm_key:
+        key: "{{ key.gpg_key }}"
+        state: present
+      register: result
+      until: result is succeeded
+      retries: 5
+      delay: 10
+
+    - name: Install additional repos
+      loop: "{{ additional_rhel_repos }}"
+      loop_control:
+        loop_var: repo
+        label: "{{ repo.name }}"
+      when: repo.name not in ansible_facts.packages
+      ansible.builtin.dnf:
+        name: "{{ repo.src }}"
+        state: present
+        update_cache: true
+      register: result
+      until: result is succeeded
+      retries: 5
+      delay: 10
+
+- name: Install Flatpak
+  become: true
+  ansible.builtin.package:
+    name: flatpak
+    state: present
+
+- name: Add the flathub flatpak repository remote
+  become: true
+  community.general.flatpak_remote:
+    name: flathub
+    state: present
+    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+
+- name: Remove filters from flathub
+  become: true
+  when: ansible_distribution == "Fedora"
+  ansible.builtin.command:
+    cmd: flatpak remote-modify --no-filter flathub 
+  changed_when: false
+
+- name: Install global dependencies
+  loop: "{{ dependencies[ansible_os_family] }}"
+  when: item not in ansible_facts.packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  become: true
+
+- name: Get current system locale
+  ansible.builtin.shell:
+    cmd: "localectl status | awk '/LANG/{print $3}' | cut -d'=' -f2"
+  register: current_locale
+  changed_when: false
+  check_mode: no
+
+# INFO alma9 box missing default locals -> extension system-monitor fails to activate if locals are missing
+- name: "Set system locale to {{ system_local_lang }}"
+  when: current_locale.stdout != system_local_lang
+  become: true
+  ansible.builtin.command:
+    cmd: "localectl set-locale {{ system_local_lang }}"
+  register: set_locale_result
+  changed_when: set_locale_result.rc == 0

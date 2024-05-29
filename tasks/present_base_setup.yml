@@ -1,0 +1,44 @@
+---
+
+# gnome base setup
+
+- name: Install Gnome packages
+  when: item not in ansible_facts.packages
+  loop: "{{ gnome_packages[ansible_os_family] }}"
+  become: true
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+
+- name: Remove obsolete Gnome packages
+  become: true
+  loop: "{{ obsolete_packages[ansible_os_family] }}"
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: absent
+
+- name: Get Gnome version
+  ansible.builtin.shell:
+    cmd: "gnome-shell --version | awk '{print $3}' | cut -d'.' -f1"
+  register: gnome_major_version
+  changed_when: false
+
+- name: Set default target to graphical
+  become: true
+  ansible.builtin.file:
+    src: /usr/lib/systemd/system/graphical.target
+    dest: /etc/systemd/system/default.target
+    state: link
+  notify: Reboot Host
+
+- name: Update GDM configuration file
+  ansible.builtin.lineinfile:
+    path: "{{ gdm_config_file[ansible_distribution] }}"
+    backrefs: true
+    regexp: '^#WaylandEnable=false$'
+    line: 'WaylandEnable=false\nDefaultSession=gnome-xorg.desktop'
+    state: present
+  become: true
+  notify: Reboot Host
+
+...

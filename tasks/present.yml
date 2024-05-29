@@ -1,0 +1,67 @@
+---
+
+# tasks to install gnome_setup
+
+- name: Gather package facts
+  ansible.builtin.package_facts:
+
+- name: Include requirements
+  ansible.builtin.include_tasks:
+    file: present_requirements.yml
+
+- name: Setup gnome base installation
+  ansible.builtin.include_tasks:
+    file: present_base_setup.yml
+
+- name: Initialize gnome base config
+  ansible.builtin.include_tasks:
+    file: present_base_config.yml
+
+- name: Handle gnome extensions
+  ansible.builtin.include_tasks:
+    file: present_extension_handling.yml
+
+- name: Handle gnome themes
+  ansible.builtin.include_tasks:
+    file: present_theme_handling.yml
+
+- name: Assign user profile picture
+  ansible.builtin.include_tasks:
+    file: present_profile_picture.yml
+
+- name: Remove unused dependencies
+  become: true
+  ansible.builtin.package:
+    autoremove: true
+
+...
+
+# INFO partly broken visible columns show no effect
+# - name: Configure nautilus
+#   community.general.dconf:
+#     key: "{{ item.key }}"
+#     value: "{{ item.value }}"
+#   with_dict: "{{ nautilus_settings }}"
+
+# - name: Configure gedit
+#   community.general.dconf:
+#     key: "{{ item.key }}"
+#     value: "{{ item.value }}"
+#   with_dict: "{{ text_editor_settings }}"
+
+# - name: Add terminal profile
+#   community.general.dconf:
+#     key: "{{ terminal_profile_list }}"
+#     value: "['{{ terminal_profile_uuid }}']"
+
+# - name: Configure terminal profile
+#   community.general.dconf:
+#     key: "{{ terminal_profile_path }}{{ item.key }}"
+#     value: "{{ item.value }}"
+#   with_dict: "{{ terminal_profile_settings }}"
+
+# - name: Configure terminal legacy settings
+#   community.general.dconf:
+#     key: "{{ item.key }}"
+#     value: "{{ item.value }}"
+#   with_dict: "{{ terminal_legacy_settings }}"

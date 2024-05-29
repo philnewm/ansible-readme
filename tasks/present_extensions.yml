@@ -1,0 +1,69 @@
+---
+- name: Save dconf path
+  when: extension.dconf_path is defined
+  ansible.builtin.set_fact:
+    dconf_path: "{{ extension.dconf_path }}"
+
+- name: "Install Gnome extension {{ extension.name }}"
+  when: extension[ansible_os_family].package != "git"
+  become: true
+  ansible.builtin.package:
+    name: "{{ extension[ansible_os_family].package }}"
+    state: present
+
+- name: "Get extension from Github: {{ extension.name }}"
+  when: extension[ansible_os_family].package == "git"
+  block:
+    # TODO test installing in destination path "{{ ansible_env.HOME }}/.local/share/gnome-shell/extensions/" right away 
+    - name: "Clone extension from github: {{ extension.name }}"
+      ansible.builtin.git:
+        repo: "{{ git_extension.repo_url }}"
+        dest: "{{ user_install_dir }}/{{ git_extension.download_dir }}"
+        single_branch: true
+        version: "{{ git_extension.branch[gnome_major_version.stdout] }}"
+        depth: 1
+      register: git_result
+      until: git_result is succeeded
+      retries: 5
+      delay: 10
+
+    - name: Update installer permissions
+      ansible.builtin.file:
+        path: "{{ (user_install_dir, git_extension.install_dir, git_extension.installer) | ansible.builtin.path_join }}"
+        mode: "0755"
+      when: git_result.changed
+
+    - name: Install git extension dependencies
+      become: true
+      when: git_extension.dependencies is defined
+      loop: "{{ git_extension.dependencies[ansible_os_family] }}"
+      loop_control:
+        loop_var: dependency
+      ansible.builtin.package:
+        name: "{{ dependency }}"
+        state: present
+
+    - name: "Install extension from github"
+      ansible.builtin.shell: "{{ git_extension.install_cmd }}"
+      args:
+        chdir: "{{ user_install_dir }}/{{git_extension.install_dir}}"
+      register: install_result
+      changed_when: install_result.rc == 0
+      when: git_result.changed
+      failed_when: install_result.rc not in [0, 2]  # INFO make install errors for clipboard-indicator even tho it works
+
+    - name: Remove downloaded repos
+      ansible.builtin.file:
+        path: "{{ user_install_dir }}"
+        state: absent
+  vars:
+    git_extension: "{{ git_ext[extension.name] }}"
+
+- name: Configure extension
+  when: extension.dconf_settings is defined
+  loop: "{{ extension.dconf_settings | dict2items }}"
+  loop_control:
+    loop_var: dconf_setting
+  community.general.dconf:
+    key: "{{ dconf_setting.key }}"
+    value: "{{ dconf_setting.value | string }}"

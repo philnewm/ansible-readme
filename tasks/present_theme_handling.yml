@@ -1,0 +1,22 @@
+---
+
+# handle gnome themes
+
+- name: Get installed GNOME themes
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      ls -1d {{ theme_paths | join('* ') }}* | xargs -n1 basename | cat
+    executable: /bin/bash
+  register: theme_names_list
+  changed_when: false
+  failed_when: ext_names_list.rc != 0 and 'No such file or directory' not in ext_names_list.stderr
+
+- name: Install themes
+  loop: "{{ gnome_themes | dict2items }}"
+  when: theme.value.name not in theme_names_list.stdout_lines
+  ansible.builtin.include_tasks:
+    file: present_themes.yml
+  loop_control:
+    label: "{{ theme.value.name }}"
+    loop_var: theme

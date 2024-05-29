@@ -1,0 +1,22 @@
+galaxy_info:
+  author: philnewm
+  description: Build custom gnome desktop
+
+  license: MIT
+
+  min_ansible_version: "2.1"
+
+  platforms:
+  - name: EL
+    versions:
+    - "9"
+  - name: Debian
+    versions:
+    - "bookworm"
+  - name: Ubuntu
+    versions:
+      - "jammy"
+
+  galaxy_tags: []
+
+dependencies: []

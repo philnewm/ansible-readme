@@ -1,0 +1,58 @@
+---
+
+# install and configure gnome themes
+
+- name: "Get theme from Github: {{ theme.value.name }}"
+  block:
+    - name: "Clone theme from github: {{ theme.value.name }}"
+      ansible.builtin.git:
+        repo: "{{ git_theme.repo_url }}"
+        dest: "{{ user_install_dir }}/{{ git_theme.download_dir }}"
+        single_branch: true
+        version: "{{ git_theme.branch[gnome_major_version.stdout] }}"
+        depth: 1
+      register: git_result
+      until: git_result is succeeded
+      retries: 5
+      delay: 10
+
+    - name: Update installer permissions
+      ansible.builtin.file:
+        path: "{{ (user_install_dir, git_theme.install_dir, git_theme.installer) | ansible.builtin.path_join }}"
+        mode: "0755"
+      when: git_result.changed
+
+    - name: Install git extension dependencies
+      when: git_theme.dependencies is defined
+      loop: "{{ git_theme.dependencies[ansible_os_family] }}"
+      loop_control:
+        loop_var: dependency
+      ansible.builtin.package:
+        name: "{{ dependency }}"
+        state: present
+      become: true
+
+    - name: "Install extension from github"
+      ansible.builtin.command: "{{ git_theme.install_cmd }}"
+      args:
+        chdir: "{{ user_install_dir }}/{{git_theme.install_dir}}"
+      register: install_result
+      changed_when: install_result.rc == 0
+      when: git_result.changed
+
+    - name: Remove downloaded repos
+      ansible.builtin.file:
+        path: "{{ user_install_dir }}"
+        state: absent
+
+    # INFO gnome-software-center not picking up theme on centos stream 9
+    - name: Configure themes
+      loop: "{{ theme.value.dconf | dict2items }}"
+      loop_control:
+        loop_var: dconf_entry
+      community.general.dconf:
+        key: "{{ dconf_entry.key }}"
+        value: "{{ dconf_entry.value | string }}"
+
+  vars:
+    git_theme: "{{ theme_repo[theme.value.name] }}"
